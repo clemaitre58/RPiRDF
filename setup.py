@@ -1,6 +1,15 @@
+import os
+
 from os.path import join
 from setuptools import setup, find_packages
-from DescGlob import __version__
+# from DescGlob import __version__
+
+
+ver_file = os.path.join('DescGlob', '_version.py')
+
+with open(ver_file) as f:
+    exec(f.read())
+
 PACKAGES = find_packages()
 
 CLASSIFIERS = ["Development Status :: 3 - Alpha",
