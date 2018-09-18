@@ -2,6 +2,8 @@
 """
 DescGlob Package
 """
+from .fourier import fourier1
+
 from ._version import __version__
 
 
