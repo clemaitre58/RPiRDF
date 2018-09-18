@@ -1,10 +1,12 @@
 import numpy as np
+from numba import jit
 
 
 def _norm_fft(in_complex):
     return np.absolute(in_complex)
 
 
+@jit
 def _compute_coef_fourrier1(norm):
     h_img = norm.shape[0]
     w_img = norm.shape[1]
@@ -25,10 +27,7 @@ def _compute_coef_fourrier1(norm):
             if pos < rmax and pos > 0:
                 ray = int(pos)
                 coef[ray] = norm[j][i]
-    print(rmax)
     lumi = norm[int(rmax)][int(rmax)]
-    print(lumi)
-
     for i in range(len(coef) - 1):
         coef_fourrier1[i] = coef[i+1] / lumi
 
