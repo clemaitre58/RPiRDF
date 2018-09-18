@@ -1,6 +1,7 @@
-from DescGlob import fourrier1
 from skimage import io
 import matplotlib.pyplot as plt
+# import numpy as np
+import DescGlob.fourrier1 as dgl
 
 
 def main():
@@ -8,8 +9,8 @@ def main():
     # io.imshow(img)
     # io.show()
     # print(img.shape)
-    norm_four = fourrier1(img)
-    plt.imshow(norm_four)
+    desc_fourrier1 = dgl.fourrier1(img)
+    plt.plot(desc_fourrier1)
     plt.show()
 
 
