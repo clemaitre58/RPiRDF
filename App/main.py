@@ -1,6 +1,4 @@
-)
-
-from ..DescGlob import fourrier1
+from DescGlob import fourrier1
 from skimage import io
 import matplotlib.pyplot as plt
 
