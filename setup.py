@@ -1,12 +1,7 @@
 import os
-
-from os.path import join
 from setuptools import setup, find_packages
-# from DescGlob import __version__
-
 
 ver_file = os.path.join('DescGlob', '_version.py')
-
 with open(ver_file) as f:
     exec(f.read())
 
@@ -45,8 +40,8 @@ AUTHOR = "Cedric LEMAITRE"
 AUTHOR_EMAIL = "c.lemaitre58@gmail.com"
 PLATFORMS = "OS Independent"
 VERSION = __version__
-PACKAGE_DATA = {'spectra_analysis': [join('Tests', 'Data', '*')]}
-REQUIRES = ["numpy", "pandas", "scipy", 'scikit-learn', "matplotlib", "six"]
+PACKAGE_DATA = {}
+REQUIRES = ["numpy", "numba"]
 
 opts = dict(name=NAME,
             maintainer=MAINTAINER,
