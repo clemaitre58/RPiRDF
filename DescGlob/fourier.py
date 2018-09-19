@@ -3,7 +3,7 @@ from numba import jit
 
 
 @jit
-def _compute_coef_fourrier1(norm):
+def _compute_coef_fourier1(norm):
     h_img = norm.shape[0]
     w_img = norm.shape[1]
     rmax = h_img // 2
@@ -26,6 +26,28 @@ def _compute_coef_fourrier1(norm):
     return coef_fourier1
 
 
+@jit
+def _is_power_2(number):
+    isPowOfTwo = True
+    while number != 1 and number > 0:
+        if number % 2:
+            isPowOfTwo = False
+
+        number = number / 2
+
+    return isPowOfTwo and (number > 0)
+
+
+@jit
+def _closest_power_2(num):
+    if num > 1:
+        for i in range(1, int(num)):
+            if (2 ** i > num):
+                return 2 ** (i - 1)
+    else:
+        return 1
+
+
 def fourier1(image):
     """Fourier descriptor.
 
@@ -41,8 +63,19 @@ def fourier1(image):
     # TODO : check if image is square a power of 2
     # TODO : if not crop de image from the center
     # TODO : place the default size to crop
+    h_img, w_img = image.shape
+    is_h_img_pow_2 = _is_power_2(h_img)
+    is_w_img_pow_2 = _is_power_2(w_img)
+
+    if (is_h_img_pow_2 and is_w_img_pow_2 and (h_img != w_img)) is False:
+        # TODO crop the matrix from the center with w and h tcrop he closest
+        # power of 2
+        if h_img < w_img:
+            h_w_size = _closest_power_2(h_img)
+        else:
+            h_w_size = _closest_power_2(w_img)
     in_image_fft = np.fft.fft2(image)
     # TODO : Normalize FFT2 results?
     in_image_fftshift = np.fft.fftshift(in_image_fft)
     in_fft_norm = np.absolute(in_image_fftshift)
-    return _compute_coef_fourrier1(in_fft_norm)
+    return _compute_coef_fourier1(in_fft_norm)
