@@ -48,6 +48,13 @@ def _closest_power_2(num):
         return 1
 
 
+def _crop_center(img, cropx, cropy):
+    y, x = img.shape
+    startx = x // 2 - cropx // 2
+    starty = y // 2 - cropy // 2
+    return img[starty:starty+cropy, startx:startx+cropx]
+
+
 def fourier1(image):
     """Fourier descriptor.
 
@@ -60,20 +67,19 @@ def fourier1(image):
             The Fourier descriptor.
     """
 
-    # TODO : check if image is square a power of 2
-    # TODO : if not crop de image from the center
-    # TODO : place the default size to crop
     h_img, w_img = image.shape
     is_h_img_pow_2 = _is_power_2(h_img)
     is_w_img_pow_2 = _is_power_2(w_img)
 
     if (is_h_img_pow_2 and is_w_img_pow_2 and (h_img != w_img)) is False:
-        # TODO crop the matrix from the center with w and h tcrop he closest
-        # power of 2
         if h_img < w_img:
             h_w_size = _closest_power_2(h_img)
         else:
             h_w_size = _closest_power_2(w_img)
+
+        image_crop = _crop_center(image, h_w_size, h_w_size)
+        image = image_crop
+
     in_image_fft = np.fft.fft2(image)
     # TODO : Normalize FFT2 results?
     in_image_fftshift = np.fft.fftshift(in_image_fft)
