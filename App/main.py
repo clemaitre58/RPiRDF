@@ -14,6 +14,8 @@ from joblib import delayed
 from sklearn.model_selection import GroupKFold
 from sklearn.model_selection import cross_validate
 from sklearn.model_selection import GridSearchCV
+from sklearn.preprocessing import StandardScaler
+from sklearn.pipeline import make_pipeline
 # from sklearn.model_selection import cross_val_predict
 
 # from xgboost import XGBRegressor as GradientBoostingRegressor
@@ -116,10 +118,11 @@ def test_perf_fourier_svm():
 # groups = np.array(groups)
     X = np.array(data)
     print(len(data))
-    clf = GridSearchCV(SVC(random_state=42, gamma='auto'),
-                       param_grid={'C': [0.001, 0.01, 0.1, 1, 10]},
+    clf = make_pipeline(StandardScaler(), SVC(random_state=42, gamma='auto'))
+    grid = GridSearchCV(clf,
+                       param_grid={'svc__C': [0.001, 0.01, 0.1, 1, 10]},
                        cv=5, iid=False)
-    scores = cross_validate(clf,
+    scores = cross_validate(grid,
                             X, Y,
                             cv=5, n_jobs=-1,
                             return_train_score=True,
