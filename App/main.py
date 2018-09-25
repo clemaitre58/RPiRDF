@@ -4,7 +4,7 @@ import glob
 import re
 
 # import pandas as pd
-# import numpy as np
+import numpy as np
 
 from joblib import Parallel
 from joblib import delayed
@@ -12,9 +12,11 @@ from joblib import delayed
 
 from sklearn.model_selection import GroupKFold
 from sklearn.model_selection import cross_validate
+from sklearn.model_selection import GridSearchCV
 # from sklearn.model_selection import cross_val_predict
 
-from xgboost import XGBRegressor as GradientBoostingRegressor
+# from xgboost import XGBRegressor as GradientBoostingRegressor
+from sklearn.svm import SVC
 
 from skimage.io import imread
 from skimage.transform import resize
@@ -67,6 +69,7 @@ def test_perf_fourier_svm():
 
     for f in filenames:
         Y.append(int(extract_class_from_path(f)))
+    Y = np.array(Y)
 
 # # filter the activity which do not contain the required information
 # fields = ['elevation', 'cadence', 'distance', 'heart-rate', 'power', 'speed']
@@ -110,17 +113,18 @@ def test_perf_fourier_svm():
 # for group_idx, activity in enumerate(data):
 #     groups += [group_idx] * activity.shape[0]
 # groups = np.array(groups)
-    X = data
-    scores = cross_validate(GradientBoostingRegressor(
-        random_state=42, n_jobs=-1),
-                            X, Y, groups=None,
-                            scoring=['r2', 'neg_median_absolute_error'],
-                            cv=GroupKFold(n_splits=3), n_jobs=1,
+    X = np.array(data)
+    clf = GridSearchCV(SVC(random_state=42, gamma='auto'),
+                       param_grid={'C': [0.001, 0.01, 0.1, 1, 10]},
+                       cv=5, iid=False)
+    scores = cross_validate(clf,
+                            X, Y,
+                            cv=5, n_jobs=-1,
                             return_train_score=True,
                             verbose=0)
 
     print('The obtained scores on training and testing in terms of '
-          'R2 and MAE are: \n')
+          'accuracy: \n')
     print(scores)
 
     # Store the prediction for visualization
