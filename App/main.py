@@ -10,6 +10,7 @@ from joblib import Parallel
 from joblib import delayed
 # from joblib import Memory
 
+#
 from sklearn.model_selection import GroupKFold
 from sklearn.model_selection import cross_validate
 from sklearn.model_selection import GridSearchCV
@@ -114,6 +115,7 @@ def test_perf_fourier_svm():
 #     groups += [group_idx] * activity.shape[0]
 # groups = np.array(groups)
     X = np.array(data)
+    print(len(data))
     clf = GridSearchCV(SVC(random_state=42, gamma='auto'),
                        param_grid={'C': [0.001, 0.01, 0.1, 1, 10]},
                        cv=5, iid=False)

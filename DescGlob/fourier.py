@@ -19,7 +19,8 @@ def _compute_coef_fourier1(norm):
             if 0 < pos < rmax:
                 ray = int(pos)
                 coef[ray] = norm[j][i]
-    lumi = norm[rmax][rmax]
+    # lumi = norm[rmax][rmax]
+    lumi = 1
     for i in range(len(coef) - 1):
         coef_fourier1[i] = coef[i + 1] / lumi
 
