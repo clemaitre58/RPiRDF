@@ -10,8 +10,7 @@ from joblib import Parallel
 from joblib import delayed
 # from joblib import Memory
 
-#
-from sklearn.model_selection import GroupKFold
+# from sklearn.model_selection import GroupKFold
 from sklearn.model_selection import cross_validate
 from sklearn.model_selection import GridSearchCV
 from sklearn.preprocessing import StandardScaler
@@ -25,6 +24,7 @@ from skimage.io import imread
 from skimage.transform import resize
 
 from DescGlob import fourier1
+# from skimage.filters import sobel
 
 
 def cases():
@@ -40,6 +40,15 @@ def read_compute_fourrier1(f):
     coef = fourier1(img)
 
     return coef
+
+
+def read_compute_fourrier1_col(f):
+    img_rgb = imread(f)
+    coef_r = fourier1(img_rgb[:][:][0])
+    coef_g = fourier1(img_rgb[:][:][1])
+    coef_b = fourier1(img_rgb[:][:][2])
+
+    return coef_r + coef_g + coef_b
 
 
 def extract_class_from_path(s):
@@ -120,7 +129,8 @@ def test_perf_fourier_svm():
     print(len(data))
     clf = make_pipeline(StandardScaler(), SVC(random_state=42, gamma='auto'))
     grid = GridSearchCV(clf,
-                       param_grid={'svc__C': [0.001, 0.01, 0.1, 1, 10]},
+                       param_grid={'svc__C': [0.001, 0.01, 0.1, 1, 10,
+                                              100, 1000]},
                        cv=5, iid=False)
     scores = cross_validate(grid,
                             X, Y,
