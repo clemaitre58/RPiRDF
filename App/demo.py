@@ -2,13 +2,14 @@ import RPi.GPIO as GPIO
 
 
 # variable globale qui sera vue dans toutes les fonctions
-flag_stop_learning = False
-flag_start_learning = False
-flag_stop_descision = False
-flag_start_descision = False
 
 
 def init():
+    global flag_stop_learning
+    global flag_start_learning
+    global flag_stop_descision
+    global flag_start_descision
+
     # configuration de la broche 7 en entree
     GPIO.setmode(GPIO.BCM)
     GPIO.setup(7, GPIO.IN)
