@@ -1,7 +1,8 @@
-import time
+import os
 import picamera
 import numpy as np
 import RPi.GPIO as GPIO
+from time import sleep
 from DescGlob import hu_moment_color
 from sklearn.svm import SVC
 
@@ -41,9 +42,8 @@ def init():
     with picamera.Picamera() as camera:
         camera.resolution = (252, 252)
         camera.framerate = 24
-        time.sleep(2)
+        sleep(2)
         return camera
-
 
 
 def stop_learning():
@@ -63,12 +63,23 @@ def stop_descision():
 
 def start_descision():
     # function qui sera appelé lorsque le programme sur interrompu
-    flag_start_descision = True
+    # on ne considère l'enterruption uniquement si on n'est pas phase
+    # d'apprentissage
+    if flag_start_learning is not True:
+        flag_start_descision = True
 
 
-def process_start_learning(camera, l_individu):
+def process_start_learning(camera, l_individu, l_nom_classe, d_lut_nom,
+                           isNew, num_class):
     # TODO: Demander un texte si c'est nouvelle apprentissage ou si
     # TODO: ou si on a pas le label dans la basse
+
+    if isNew is True:
+        # On demande le nom de l'objet
+        nom_obj = input("Quel est le nom de l'objet")
+        num_class += 1
+        d_lut_nom[num_class] = nom_obj
+        isNew = False
 
     # on récupère une image
     res = camera.resolution
@@ -79,38 +90,52 @@ def process_start_learning(camera, l_individu):
     des_hu_col = hu_moment_color(ind)
 
     l_individu.append(des_hu_col)
+    l_nom_classe.append(num_class)
 
-    return l_individu
+    return l_individu, l_nom_classe, d_lut_nom, isNew, num_class
 
 
-def process_stop_learning(l_individu, l_classe):
+def process_stop_learning(l_individu, l_classe, isNew, isModelExist):
     # extract number of class
-    Y = l_classe[:, 0]
+
+    Y = np.array(l_classe)
+    X = np.array(l_individu)
     clf = SVC(gamma='auto', C=1000, random_state=42)
-    clf.fit(l_individu, Y)
-    # TODO: enregister 1- model 2- X 3- Y
+    clf.fit(X, Y)
+    # Enregistrement des données de chaque individu (descriptions)
+    np.save('mat_desc.npy', l_individu)
+    # Enregistrement des données de description des classes
+    np.save('mat_des_classe.npy', l_classe)
     # Pour ne pas rentrer dans le process avant la prochaine interrupt sur
     # le bouton stop learning
     flag_stop_learning = False
     # repasse le flag de start à false pour ne pas continuer le calcul du Hu
     # dans la liste X
     flag_start_learning = False
-    return clf
+    # on rend possible l'apprentissage d'une nouvelle classe la prochaine fois
+    # qu'on va appuyer sur le bouton start learning
+    isNew = True
+    isModelExist = True
+    return clf, isNew, isModelExist
 
 
-def process_start_decision(camera, clf):
-    # TODO: faire une prédiction
-
+def process_start_decision(camera, clf, d_lut_nom, isModelExist):
     # on récupère une image
-    res = camera.resolution
-    w = res[0]
-    h = res[1]
-    ind = np.empty((w, h, 3))
-    camera.capture(ind, 'RGB')
-    des_hu_col = hu_moment_color(ind)
-    classe_ind = clf.predict(des_hu_col)
-
-    # TODO: faire l'annonce de la classe par la synthèse vocale
+    if isModelExist is True:
+        res = camera.resolution
+        w = res[0]
+        h = res[1]
+        ind = np.empty((w, h, 3))
+        camera.capture(ind, 'RGB')
+        des_hu_col = hu_moment_color(ind)
+        classe_ind = clf.predict(des_hu_col)
+        nom = d_lut_nom[classe_ind]
+        # TODO: faire l'annonce de la classe par la synthèse vocale
+        mes = 'flite -voice awb -t "' + nom + '"'
+        os.system(mes)
+        sleep(0.1)
+    else:
+        print("Aucun modèle existant, veuillez faire ")
 
 
 def process_stop_decision():
@@ -125,16 +150,29 @@ if __name__ == '__main__':
     # initiation de la l'interruption
     camera = init()
     X = []
+    Y = []
+    d_lut_nom = {}
+    isNew = True
+    isModelExist = False
+    num_class = 0
     # boucle infini = tache principale
     while True:
         # si une interruption c'est produite alors on lance le traitement c
         # adéquat
         if flag_start_learning is True:
-            X, Y = process_start_learning(camera, X)
+            X, Y, d_lut_nom,
+            isNew, num_class = process_start_learning(camera,
+                                                      X,
+                                                      Y,
+                                                      d_lut_nom,
+                                                      isNew,
+                                                      num_class)
+
         if flag_stop_learning is True:
-            model = process_stop_learning(X, Y)
+            model, isNew, isModelExist = process_stop_learning(X, Y, isNew,
+                                                               isModelExist)
         if flag_start_learning is True:
-            process_start_decision(camera, model)
+            process_start_decision(camera, model, d_lut_nom, isModelExist)
         if flag_stop_descision is True:
             process_stop_decision()
 
