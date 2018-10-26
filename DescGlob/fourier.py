@@ -59,11 +59,13 @@ def _crop_center(img, cropx, cropy):
 def fourier1(image):
     """Fourier descriptor.
 
-    Parameters:
+    Args
+    ----
         image : ndarray, shape (height, width)
             Input image.
 
-    Returns:
+    Returns
+    -------
         descriptor : ndarray, shape (height // 2 -1,)
             The Fourier descriptor.
     """

@@ -133,9 +133,29 @@ def _zernike_moment(src, n, m):
 
 @jit
 def zernike_moment(img, order):
+    """ Zernike moments
+
+    This functions compute Zernike moments which 16 parameters maximum  for
+    each images
+
+    Args
+    ----
+        img : ndarray, size(width, heigth)
+              input image
+        order : integer
+                order of the moment to compute if order greater than 15, we
+                force order to 15
+    Returns
+    ------
+        coef_zernike : list of float
+                       list of Zernike descriptors max 16 values
+    """
     ind_zer = _generate_indices()
 
     coef_zernike = []
+    if order > 15:
+        order = 15
+
     for i in range(order):
         Z, A, Phi = _zernike_moment(img, ind_zer[i].n, ind_zer[i].m)
         coef_zernike.append(Z)

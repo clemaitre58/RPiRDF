@@ -5,11 +5,13 @@ from skimage.measure import moments_hu
 def hu_moment(image):
     """hu_moment descriptor for grayscale image.
 
-    Parameters:
+    Args
+    ----
         image : ndarray, shape (height, width)
             Input image.
 
-    Returns:
+    Returns
+    -------
         descriptor : ndarray, shape (7)
             The Hu Momemnt.
     """
@@ -22,11 +24,13 @@ def hu_moment(image):
 def hu_moment_color(image_color):
     """hu_moment descriptor for color image.
 
-    Parameters:
+    Args
+    ----
         image : ndarray, shape (height, width, 3)
             Input image.
 
-    Returns:
+    Returns
+    -------
         descriptor : ndarray, shape (21)
             The Hu Momemnt for each color component.
     """
