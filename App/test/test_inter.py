@@ -11,31 +11,26 @@ from sklearn.svm import SVC
 
 
 def init():
-    global flag_stop_learning
-    global flag_start_learning
-    global flag_stop_descision
-    global flag_start_descision
+##    global flag_stop_learning
+##    global flag_start_learning
+##    global flag_stop_descision
+##    global flag_start_descision
 
     # configuration des broches en entree
     GPIO.setmode(GPIO.BCM)
-    GPIO.setup(17, GPIO.IN)
-    GPIO.setup(27, GPIO.IN)
-    GPIO.setup(22, GPIO.IN)
-    GPIO.setup(23, GPIO.IN)
+    GPIO.setup(17, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+    GPIO.setup(27, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+    GPIO.setup(22, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+    GPIO.setup(23, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
     # definition de l'interruption
-    GPIO.add_event_detect(17, GPIO.RISING, callback=press_btn,
+    GPIO.add_event_detect(17, GPIO.FALLING, callback=press_btn,
                           bouncetime=300)
-    GPIO.add_event_detect(27, GPIO.RISING, callback=press_btn,
+    GPIO.add_event_detect(27, GPIO.FALLING, callback=press_btn,
                           bouncetime=300)
-    GPIO.add_event_detect(22, GPIO.RISING, callback=press_btn,
+    GPIO.add_event_detect(22, GPIO.FALLING, callback=press_btn,
                           bouncetime=300)
-    GPIO.add_event_detect(23, GPIO.RISING, callback=press_btn,
+    GPIO.add_event_detect(23, GPIO.FALLING, callback=press_btn,
                           bouncetime=300)
-    # initialisation du flag
-    flag_stop_learning = False
-    flag_start_learning = False
-    flag_stop_descision = False
-    flag_start_descision = False
 
     # démarrage de picaméra
     # paramétrage de la cam
@@ -48,6 +43,7 @@ def init():
 
 def press_btn(channel):
     # function qui sera appelé lorsque le programme sur interrompu
+    print(channel)
     if channel == 17:
         flag_stop_learning = True
     elif channel == 27:
@@ -55,8 +51,8 @@ def press_btn(channel):
     elif channel == 22:
         flag_stop_descision = True
     elif channel == 23:
-        if flag_start_learning is not True:
-            flag_start_descision = True
+        # if flag_start_learning is not True:
+        flag_start_descision = True
 
 
 def process_start_learning(camera, l_individu, l_nom_classe, d_lut_nom,
@@ -130,6 +126,11 @@ def process_stop_decision():
 
 
 if __name__ == '__main__':
+    # initialisation du flag
+    flag_stop_learning = False
+    flag_start_learning = False
+    flag_stop_descision = False
+    flag_start_descision = False
 
     # initiation de la l'interruption
 
@@ -140,12 +141,12 @@ if __name__ == '__main__':
     while True:
         # si une interruption c'est produite alors on lance le traitement c
         # adéquat
-        if flag_start_learning is True:
+        if flag_start_learning :
             print('start learning')
-        if flag_stop_learning is True:
+        if flag_stop_learning :
             print('stop learning')
-        if flag_start_descision is True:
+        if flag_start_descision :
             print('start decision')
-        if flag_stop_descision is True:
+        if flag_stop_descision :
             print('stop decision')
         sleep(0.1)
