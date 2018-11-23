@@ -1,3 +1,4 @@
+import pygame
 import os
 import picamera
 import numpy as np
@@ -159,6 +160,14 @@ if __name__ == '__main__':
     # initiation de la l'interruption
 
     camera = init()
+	In=1
+	pygame.init()
+	w = 256
+	h = 256
+	size=(w,h)
+	screen = pygame.display.set_mode(size)
+	c = pygame.time.Clock() # create a clock object for timing
+
     print(camera.resolution)
     print('PiRDF start')
     X = []
@@ -183,3 +192,13 @@ if __name__ == '__main__':
             process_stop_decision()
             print('stop decision')
         sleep(0.1)
+        filename = str(In)+".jpg" # ensure filename is correct
+        camera.capture(filename)
+        img=pygame.image.load(filename)
+        screen.blit(img,(0,0))
+        pygame.display.flip() # update the display
+        c.tick(3) # only three images per second
+        In += 1
+
+
+
