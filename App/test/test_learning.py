@@ -29,12 +29,12 @@ def init():
 
     # démarrage de picaméra
     # paramétrage de la cam
-    with picamera.PiCamera() as camera:
-        camera.resolution = (256, 256)
-        camera.framerate = 24
-        sleep(2)
-        print(camera.resolution)
-        
+    camera = picamera.PiCamera()
+    camera.resolution = (256, 256)
+    camera.framerate = 24
+    sleep(2)
+    print(camera.resolution)
+
     return camera
 
 
