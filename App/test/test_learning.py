@@ -33,7 +33,9 @@ def init():
         camera.resolution = (256, 256)
         camera.framerate = 24
         sleep(2)
-        return camera
+        print(camera.resolution)
+        
+    return camera
 
 
 def press_btn(channel):
@@ -140,7 +142,8 @@ if __name__ == '__main__':
 
     # initiation de la l'interruption
 
-    cam = init()
+    camera = init()
+    print(camera.resolution)
     print('PiRDF start')
     X = []
     Y = []
