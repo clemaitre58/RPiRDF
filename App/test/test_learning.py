@@ -126,7 +126,7 @@ def process_start_decision(camera, clf, d_lut_nom, isModelExist):
         w = res[0]
         h = res[1]
         ind = np.empty((w, h, 3), dtype=np.uint8)
-        camera.capture(ind, 'RGB')
+        camera.capture(ind, 'rgb')
         des_hu_col = hu_moment_color(ind)
         classe_ind = clf.predict(des_hu_col)
         nom = d_lut_nom[classe_ind[0]]
@@ -134,14 +134,14 @@ def process_start_decision(camera, clf, d_lut_nom, isModelExist):
         # TODO: faire l'annonce de la classe par la synthèse vocale
         mes = 'flite -voice awb -t "' + nom + '"'
         os.system(mes)
-        sleep(0.1)
+        sleep(2)
     else:
         print("Aucun modèle existant, veuillez faire un apprentissage")
 
 
 def process_stop_decision():
     # Pour arrêter la routine de décisison
-    global flag_stop_descision
+    global flag_start_descision
     flag_start_descision = False
     # Pour rendre possible une future interruption "Start Desc"
     global flag_stop_descision
@@ -178,7 +178,8 @@ if __name__ == '__main__':
             clf, isNew, isModelExist = process_stop_learning(X, Y, isNew, isModelExist)
             print('Learning done!')
         if flag_start_descision:
-            print('start decision')
+            process_start_decision(camera, clf, d_lut_nom, isModelExist)
         if flag_stop_descision:
+            process_stop_decision()
             print('stop decision')
         sleep(0.1)
