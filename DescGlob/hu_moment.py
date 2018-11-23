@@ -34,10 +34,15 @@ def hu_moment_color(image_color):
         descriptor : ndarray, shape (21)
             The Hu Momemnt for each color component.
     """
+    r = image_color[:, :, 0]
+    g = image_color[:, :, 1]
+    b = image_color[:, :, 2]
 
-    M_r = hu_moment(image_color[:, :, 0])
-    M_g = hu_moment(image_color[:, :, 1])
-    M_b = hu_moment(image_color[:, :, 2])
+
+    M_r = hu_moment(r)
+    M_g = hu_moment(g)
+    M_b = hu_moment(b)
+    
 
     M = M_r + M_g + M_b
     return M

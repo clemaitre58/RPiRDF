@@ -73,8 +73,9 @@ def process_start_learning(camera, l_individu, l_nom_classe, d_lut_nom,
     res = camera.resolution
     w = res[0]
     h = res[1]
-    ind = np.empty((w, h, 3))
+    ind = np.empty((w, h, 3), dtype=np.uint8)
     camera.capture(ind, 'rgb')
+
     des_hu_col = hu_moment_color(ind)
 
     l_individu.append(des_hu_col)
