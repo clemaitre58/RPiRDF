@@ -34,24 +34,28 @@ def init():
 
     # démarrage de picaméra
     # paramétrage de la cam
-##    with picamera.Picamera() as camera:
-##        camera.resolution = (256, 256)
-##        camera.framerate = 24
-##        sleep(2)
-##        return camera
+    with picamera.PiCamera() as camera:
+       camera.resolution = (256, 256)
+       camera.framerate = 24
+       sleep(2)
+       return camera
 
 
 def press_btn(channel):
     # function qui sera appelé lorsque le programme sur interrompu
     print(channel)
     if channel == 17:
+        global flag_stop_learning
         flag_stop_learning = True
     elif channel == 27:
+        global flag_start_learning
         flag_start_learning = True
     elif channel == 22:
+        global flag_stop_descision
         flag_stop_descision = True
     elif channel == 23:
         # if flag_start_learning is not True:
+        global flag_start_descision
         flag_start_descision = True
 
 
