@@ -129,7 +129,7 @@ def process_start_decision(camera, clf, d_lut_nom, isModelExist):
         camera.capture(ind, 'RGB')
         des_hu_col = hu_moment_color(ind)
         classe_ind = clf.predict(des_hu_col)
-        nom = d_lut_nom[classe_ind]
+        nom = d_lut_nom[classe_ind[0]]
         print('Object name : ', nom)
         # TODO: faire l'annonce de la classe par la synthèse vocale
         mes = 'flite -voice awb -t "' + nom + '"'
