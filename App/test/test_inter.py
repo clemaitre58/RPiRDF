@@ -23,13 +23,13 @@ def init():
     GPIO.setup(22, GPIO.IN)
     GPIO.setup(23, GPIO.IN)
     # definition de l'interruption
-    GPIO.add_event_detect(17, GPIO.RISING, callback=stop_learning,
+    GPIO.add_event_detect(17, GPIO.RISING, callback=press_btn,
                           bouncetime=300)
-    GPIO.add_event_detect(27, GPIO.RISING, callback=start_learning,
+    GPIO.add_event_detect(27, GPIO.RISING, callback=press_btn,
                           bouncetime=300)
-    GPIO.add_event_detect(22, GPIO.RISING, callback=stop_descision,
+    GPIO.add_event_detect(22, GPIO.RISING, callback=press_btn,
                           bouncetime=300)
-    GPIO.add_event_detect(23, GPIO.RISING, callback=start_descision,
+    GPIO.add_event_detect(23, GPIO.RISING, callback=press_btn,
                           bouncetime=300)
     # initialisation du flag
     flag_stop_learning = False
@@ -46,27 +46,17 @@ def init():
 ##        return camera
 
 
-def stop_learning(17):
+def stop_learning(channel):
     # function qui sera appelé lorsque le programme sur interrompu
-    flag_stop_learning = True
-
-
-def start_learning(27):
-    # function qui sera appelé lorsque le programme sur interrompu
-    flag_start_learning = True
-
-
-def stop_descision(22):
-    # function qui sera appelé lorsque le programme sur interrompu
-    flag_stop_descision = True
-
-
-def start_descision(23):
-    # function qui sera appelé lorsque le programme sur interrompu
-    # on ne considère l'enterruption uniquement si on n'est pas phase
-    # d'apprentissage
-    if flag_start_learning is not True:
-        flag_start_descision = True
+    if channel == 17:
+        flag_stop_learning = True
+    elif channel == 27:
+        flag_start_learning = True
+    elif channel == 22:
+        flag_stop_descision = True
+    elif channel == 23:
+        if flag_start_learning is not True:
+            flag_start_descision = True
 
 
 def process_start_learning(camera, l_individu, l_nom_classe, d_lut_nom,
