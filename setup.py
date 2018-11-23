@@ -41,7 +41,7 @@ AUTHOR_EMAIL = "c.lemaitre58@gmail.com"
 PLATFORMS = "OS Independent"
 VERSION = __version__
 PACKAGE_DATA = {}
-REQUIRES = ["numpy", "numba"]
+REQUIRES = []
 
 opts = dict(name=NAME,
             maintainer=MAINTAINER,

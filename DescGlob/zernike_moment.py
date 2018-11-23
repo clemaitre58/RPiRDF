@@ -1,6 +1,5 @@
 import numpy as np
 from math import factorial
-from numba import jit
 
 
 class ZernikeIndices:
@@ -10,7 +9,6 @@ class ZernikeIndices:
         self.n = j
 
 
-@jit
 def _generate_indices():
     tab_ind = []
     tab_ind.append(ZernikeIndices(0, 0))  # 0
@@ -58,7 +56,6 @@ def _generate_indices():
 #   m = the repetition of Zernike moment
 # -------------------------------------------------------------------------i
 
-@jit
 def _radial_poly(r, n, m):
     rad = np.zeros(r.shape, r.dtype)
     P = (n - abs(m)) / 2
@@ -93,7 +90,6 @@ def _radial_poly(r, n, m):
 # -------------------------------------------------------------------------
 
 
-@jit
 def _zernike_moment(src, n, m):
 
     H, W = src.shape
@@ -131,7 +127,6 @@ def _zernike_moment(src, n, m):
     return Z, A, Phi
 
 
-@jit
 def zernike_moment(img, order):
     """ Zernike moments
 

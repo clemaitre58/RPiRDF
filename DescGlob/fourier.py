@@ -1,8 +1,7 @@
 import numpy as np
-from numba import jit
 
 
-@jit
+
 def _compute_coef_fourier1(norm):
     h_img = norm.shape[0]
     w_img = norm.shape[1]
@@ -27,7 +26,6 @@ def _compute_coef_fourier1(norm):
     return coef_fourier1
 
 
-@jit
 def _is_power_2(number):
     isPowOfTwo = True
     while number != 1 and number > 0:
@@ -39,7 +37,7 @@ def _is_power_2(number):
     return isPowOfTwo and (number > 0)
 
 
-@jit
+
 def _closest_power_2(num):
     if num > 1:
         for i in range(1, int(num)):
