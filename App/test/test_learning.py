@@ -157,13 +157,7 @@ if __name__ == '__main__':
         # si une interruption c'est produite alors on lance le traitement c
         # adéquat
         if flag_start_learning:
-            X, Y, d_lut_nom,
-            isNew, num_class = process_start_learning(camera,
-                                                      X,
-                                                      Y,
-                                                      d_lut_nom,
-                                                      isNew,
-                                                      num_class)
+            X, Y, d_lut_nom,isNew,num_class = process_start_learning(camera, X, Y, d_lut_nom, isNew, num_class)
         if flag_stop_learning:
             print('stop learning')
         if flag_start_descision:
