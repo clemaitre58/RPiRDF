@@ -88,10 +88,14 @@ def process_stop_learning(l_individu, l_classe, isNew, isModelExist):
     # extract number of class
 
     max_ech = len(l_classe)
-    val_last_classe = X[max_ech]
+    val_last_classe = l_classe[max_ech-1]
+    
+    print('Last class :', val_last_classe)
 
     if val_last_classe == 1:
         print('Only one class. Impossible to learn something')
+        global flag_stop_learning
+        flag_stop_learning = False
         return 0, True, False
 
     Y = np.array(l_classe)
@@ -104,6 +108,7 @@ def process_stop_learning(l_individu, l_classe, isNew, isModelExist):
     np.save('mat_des_classe.npy', l_classe)
     # Pour ne pas rentrer dans le process avant la prochaine interrupt sur
     # le bouton stop learning
+    global flag_stop_learning
     flag_stop_learning = False
     # repasse le flag de start à false pour ne pas continuer le calcul du Hu
     # dans la liste X
