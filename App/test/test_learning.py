@@ -3,7 +3,7 @@ import picamera
 import numpy as np
 import RPi.GPIO as GPIO
 from time import sleep
-#from DescGlob import hu_moment_color
+# from DescGlob import hu_moment_color
 from sklearn.svm import SVC
 
 
@@ -11,11 +11,6 @@ from sklearn.svm import SVC
 
 
 def init():
-##    global flag_stop_learning
-##    global flag_start_learning
-##    global flag_stop_descision
-##    global flag_start_descision
-
     # configuration des broches en entree
     GPIO.setmode(GPIO.BCM)
     GPIO.setup(17, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
@@ -35,35 +30,42 @@ def init():
     # démarrage de picaméra
     # paramétrage de la cam
     with picamera.PiCamera() as camera:
-       camera.resolution = (256, 256)
-       camera.framerate = 24
-       sleep(2)
-       return camera
+        camera.resolution = (256, 256)
+        camera.framerate = 24
+        sleep(2)
+        return camera
 
 
 def press_btn(channel):
     # function qui sera appelé lorsque le programme sur interrompu
     print(channel)
     if channel == 17:
-        global flag_stop_learning
-        flag_stop_learning = True
-    elif channel == 27:
         global flag_start_learning
         flag_start_learning = True
+    elif channel == 27:
+        global flag_stop_learning
+        flag_stop_learning = True
+        global flag_start_learning
+        flag_start_learning = False
     elif channel == 22:
-        global flag_stop_descision
-        flag_stop_descision = True
-    elif channel == 23:
-        # if flag_start_learning is not True:
         global flag_start_descision
         flag_start_descision = True
+    elif channel == 23:
+        # if flag_start_learning is not True:
+        global flag_stop_descision
+        flag_stop_descision = True
 
 
 def process_start_learning(camera, l_individu, l_nom_classe, d_lut_nom,
                            isNew, num_class):
     # TODO: Demander un texte si c'est nouvelle apprentissage ou si
     # TODO: ou si on a pas le label dans la basse
-
+    if isNew is True:
+        # On demande le nom de l'objet
+        nom_obj = input("Quel est le nom de l'objet")
+        num_class += 1
+        d_lut_nom[num_class] = nom_obj
+        isNew = False
 
     # on récupère une image
     res = camera.resolution
@@ -95,7 +97,6 @@ def process_stop_learning(l_individu, l_classe, isNew, isModelExist):
     flag_stop_learning = False
     # repasse le flag de start à false pour ne pas continuer le calcul du Hu
     # dans la liste X
-    flag_start_learning = False
     # on rend possible l'apprentissage d'une nouvelle classe la prochaine fois
     # qu'on va appuyer sur le bouton start learning
     isNew = True
@@ -130,6 +131,7 @@ def process_stop_decision():
 
 
 if __name__ == '__main__':
+
     # initialisation du flag
     flag_stop_learning = False
     flag_start_learning = False
@@ -140,17 +142,29 @@ if __name__ == '__main__':
 
     cam = init()
     print('PiRDF start')
+    X = []
+    Y = []
+    d_lut_nom = {}
+    isNew = True
+    isModelExist = False
+    num_class = 0
 
     # boucle infini = tache principale
     while True:
         # si une interruption c'est produite alors on lance le traitement c
         # adéquat
-        if flag_start_learning :
-            print('start learning')
-        if flag_stop_learning :
+        if flag_start_learning:
+            X, Y, d_lut_nom,
+            isNew, num_class = process_start_learning(camera,
+                                                      X,
+                                                      Y,
+                                                      d_lut_nom,
+                                                      isNew,
+                                                      num_class)
+        if flag_stop_learning:
             print('stop learning')
-        if flag_start_descision :
+        if flag_start_descision:
             print('start decision')
-        if flag_stop_descision :
+        if flag_stop_descision:
             print('stop decision')
         sleep(0.1)
