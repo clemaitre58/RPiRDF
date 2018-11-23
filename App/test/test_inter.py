@@ -46,7 +46,7 @@ def init():
 ##        return camera
 
 
-def stop_learning(channel):
+def press_btn(channel):
     # function qui sera appelé lorsque le programme sur interrompu
     if channel == 17:
         flag_stop_learning = True
