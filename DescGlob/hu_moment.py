@@ -1,5 +1,6 @@
 from skimage.measure import moments_central
 from skimage.measure import moments_hu
+import numpy as np
 
 
 def hu_moment(image):
@@ -38,11 +39,8 @@ def hu_moment_color(image_color):
     g = image_color[:, :, 1]
     b = image_color[:, :, 2]
 
-
     M_r = hu_moment(r)
     M_g = hu_moment(g)
     M_b = hu_moment(b)
-    
 
-    M = M_r + M_g + M_b
-    return M
+    return np.hstack([M_r, M_g, M_b])
