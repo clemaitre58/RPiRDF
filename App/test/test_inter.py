@@ -3,7 +3,7 @@ import picamera
 import numpy as np
 import RPi.GPIO as GPIO
 from time import sleep
-from DescGlob import hu_moment_color
+#from DescGlob import hu_moment_color
 from sklearn.svm import SVC
 
 
@@ -16,20 +16,20 @@ def init():
     global flag_stop_descision
     global flag_start_descision
 
-    # configuration de la broche 7 en entree
+    # configuration des broches en entree
     GPIO.setmode(GPIO.BCM)
-    GPIO.setup(11, GPIO.IN)
-    GPIO.setup(13, GPIO.IN)
-    GPIO.setup(15, GPIO.IN)
-    GPIO.setup(16, GPIO.IN)
+    GPIO.setup(17, GPIO.IN)
+    GPIO.setup(27, GPIO.IN)
+    GPIO.setup(22, GPIO.IN)
+    GPIO.setup(23, GPIO.IN)
     # definition de l'interruption
-    GPIO.add_event_detect(11, GPIO.RISING, callback=stop_learning,
+    GPIO.add_event_detect(17, GPIO.RISING, callback=stop_learning,
                           bouncetime=300)
-    GPIO.add_event_detect(13, GPIO.RISING, callback=start_learning,
+    GPIO.add_event_detect(27, GPIO.RISING, callback=start_learning,
                           bouncetime=300)
-    GPIO.add_event_detect(15, GPIO.RISING, callback=stop_descision,
+    GPIO.add_event_detect(22, GPIO.RISING, callback=stop_descision,
                           bouncetime=300)
-    GPIO.add_event_detect(16, GPIO.RISING, callback=start_descision,
+    GPIO.add_event_detect(23, GPIO.RISING, callback=start_descision,
                           bouncetime=300)
     # initialisation du flag
     flag_stop_learning = False
@@ -39,29 +39,29 @@ def init():
 
     # démarrage de picaméra
     # paramétrage de la cam
-    with picamera.Picamera() as camera:
-        camera.resolution = (256, 256)
-        camera.framerate = 24
-        sleep(2)
-        return camera
+##    with picamera.Picamera() as camera:
+##        camera.resolution = (256, 256)
+##        camera.framerate = 24
+##        sleep(2)
+##        return camera
 
 
-def stop_learning():
+def stop_learning(17):
     # function qui sera appelé lorsque le programme sur interrompu
     flag_stop_learning = True
 
 
-def start_learning():
+def start_learning(27):
     # function qui sera appelé lorsque le programme sur interrompu
     flag_start_learning = True
 
 
-def stop_descision():
+def stop_descision(22):
     # function qui sera appelé lorsque le programme sur interrompu
     flag_stop_descision = True
 
 
-def start_descision():
+def start_descision(23):
     # function qui sera appelé lorsque le programme sur interrompu
     # on ne considère l'enterruption uniquement si on n'est pas phase
     # d'apprentissage
@@ -144,6 +144,7 @@ if __name__ == '__main__':
     # initiation de la l'interruption
 
     cam = init()
+    print('PiRDF start')
 
     # boucle infini = tache principale
     while True:
@@ -157,5 +158,4 @@ if __name__ == '__main__':
             print('start decision')
         if flag_stop_descision is True:
             print('stop decision')
-
-        pass
+        sleep(0.1)
