@@ -64,7 +64,7 @@ def process_start_learning(camera, l_individu, l_nom_classe, d_lut_nom,
     # TODO: ou si on a pas le label dans la basse
     if isNew is True:
         # On demande le nom de l'objet
-        nom_obj = input("Quel est le nom de l'objet")
+        nom_obj = input("Quel est le nom de l'objet ?\n")
         num_class += 1
         d_lut_nom[num_class] = nom_obj
         isNew = False
@@ -159,7 +159,8 @@ if __name__ == '__main__':
         if flag_start_learning:
             X, Y, d_lut_nom,isNew,num_class = process_start_learning(camera, X, Y, d_lut_nom, isNew, num_class)
         if flag_stop_learning:
-            print('stop learning')
+            clf, isNew, isModelExist = process_stop_learning(X, Y, isNew, isModelExist)
+            print('Learning done!')
         if flag_start_descision:
             print('start decision')
         if flag_stop_descision:
