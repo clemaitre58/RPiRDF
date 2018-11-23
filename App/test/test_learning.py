@@ -87,6 +87,13 @@ def process_start_learning(camera, l_individu, l_nom_classe, d_lut_nom,
 def process_stop_learning(l_individu, l_classe, isNew, isModelExist):
     # extract number of class
 
+    max_ech = len(l_classe)
+    val_last_classe = X[max_ech]
+
+    if val_last_classe == 1:
+        print('Only one class. Impossible to learn something')
+        return 0, True, False
+
     Y = np.array(l_classe)
     X = np.array(l_individu)
     clf = SVC(gamma='auto', C=1000, random_state=42)
