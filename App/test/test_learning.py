@@ -153,21 +153,25 @@ if __name__ == '__main__':
     num_class = 0
 
     # boucle infini = tache principale
-    while True:
-        # si une interruption c'est produite alors on lance le traitement c
-        # adéquat
-        if flag_start_learning:
-            X, Y, d_lut_nom,
-            isNew, num_class = process_start_learning(camera,
-                                                      X,
-                                                      Y,
-                                                      d_lut_nom,
-                                                      isNew,
-                                                      num_class)
-        if flag_stop_learning:
-            print('stop learning')
-        if flag_start_descision:
-            print('start decision')
-        if flag_stop_descision:
-            print('stop decision')
-        sleep(0.1)
+    try:
+        while True:
+            # si une interruption c'est produite alors on lance le traitement c
+            # adéquat
+            if flag_start_learning:
+                X, Y, d_lut_nom,
+                isNew, num_class = process_start_learning(camera,
+                                                          X,
+                                                          Y,
+                                                          d_lut_nom,
+                                                          isNew,
+                                                          num_class)
+            if flag_stop_learning:
+                print('stop learning')
+            if flag_start_descision:
+                print('start decision')
+            if flag_stop_descision:
+                print('stop decision')
+            sleep(0.1)
+
+    finally:
+        camera.close()
