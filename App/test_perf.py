@@ -3,7 +3,7 @@ import os
 import glob
 import re
 
-# import pandas as pd
+import pandas as pd
 import numpy as np
 
 import matplotlib.pyplot as plt
@@ -222,18 +222,23 @@ def main():
 
     # timing Zernike
     # timing_zernike()
+    # TODO Save in CVS with pandas
 
     # Test performances Fourier
     s_f = test_perf_fourier_svm()
-    np.save('s_f.npy', s_f)
 
     # Test performances Fourier
     s_h = test_perf_hu_svm()
-    np.save('s_h.npy', s_h)
 
     # Test performances Zernike
     s_z = test_perf_zernike_svm()
-    np.save('s_z.npy', s_z)
+    f = s_f['test_score']
+    h = s_h['test_score']
+    z = s_z['test_score']
+
+    d = {'f': f, 'h': h, 'z': z}
+    df = pd.DataFrame(data=d)
+    df.to_csv('test_score.csv')
 
     # debug Zernike
     # debug_zernike(verbose=True)
