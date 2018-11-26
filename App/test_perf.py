@@ -225,34 +225,37 @@ def main():
 
     # Test performances Fourier
     s_f = test_perf_fourier_svm()
+    np.save('s_f.npy', s_f)
 
     # Test performances Fourier
     s_h = test_perf_hu_svm()
+    np.save('s_h.npy', s_h)
 
     # Test performances Zernike
     s_z = test_perf_zernike_svm()
+    np.save('s_z.npy', s_z)
 
     # debug Zernike
     # debug_zernike(verbose=True)
 
-    v_svc_C = [0.001, 0.01, 0.1, 1, 10, 100, 1000]
-    ind = np.arange(len(s_f))  # the x locations for the groups
-    width = 0.35  # the width of the bars
-    fig, ax = plt.subplots()
-    rects1 = ax.bar(ind - width/3, s_f['test_score'], width,
-                    color='SkyBlue', label='Fourier1')
-    rects2 = ax.bar(ind + width/3, s_h['test_score'], width,
-                    color='IndianRed', label='Hu')
-    rects3 = ax.bar(ind + width/3, s_z['test_score'], width,
-                    label='Zernike')
-    # Add some text for labels, title and custom x-axis tick labels, etc.
-    ax.set_ylabel('Scores')
-    ax.set_title('Scores with 3 methods of characterization')
-    ax.set_xticks(ind)
-    ax.set_xticklabels(('0.001, 0.01, 0.1, 1, 10, 100, 1000'))
-    ax.legend()
-    plt.savefig('comparatif.pdf')
-    plt.show()
+    # v_svc_C = [0.001, 0.01, 0.1, 1, 10, 100, 1000]
+    # ind = np.arange(len(s_f))  # the x locations for the groups
+    # width = 0.35  # the width of the bars
+    # fig, ax = plt.subplots()
+    # rects1 = ax.bar(ind - width/3, s_f['test_score'], width,
+    #                 color='SkyBlue', label='Fourier1')
+    # rects2 = ax.bar(ind + width/3, s_h['test_score'], width,
+    #                 color='IndianRed', label='Hu')
+    # rects3 = ax.bar(ind + width/3, s_z['test_score'], width,
+    #                 label='Zernike')
+    # # Add some text for labels, title and custom x-axis tick labels, etc.
+    # ax.set_ylabel('Scores')
+    # ax.set_title('Scores with 3 methods of characterization')
+    # ax.set_xticks(ind)
+    # ax.set_xticklabels(('0.001, 0.01, 0.1, 1, 10, 100, 1000'))
+    # ax.legend()
+    # plt.savefig('comparatif.pdf')
+    # plt.show()
 
 
 if __name__ == '__main__':
