@@ -153,7 +153,7 @@ def zernike_moment(img, order):
 
     for i in range(order):
         Z, A, Phi = _zernike_moment(img, ind_zer[i].n, ind_zer[i].m)
-        coef_zernike.append(Z)
+        coef_zernike.append(np.absolute(Z))
     return coef_zernike
 
 
