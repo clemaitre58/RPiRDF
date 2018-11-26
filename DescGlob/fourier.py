@@ -1,7 +1,6 @@
 import numpy as np
 
 
-
 def _compute_coef_fourier1(norm):
     h_img = norm.shape[0]
     w_img = norm.shape[1]
@@ -35,7 +34,6 @@ def _is_power_2(number):
         number = number / 2
 
     return isPowOfTwo and (number > 0)
-
 
 
 def _closest_power_2(num):
@@ -86,3 +84,27 @@ def fourier1(image):
     in_image_fftshift = np.fft.fftshift(in_image_fft)
     in_fft_norm = np.absolute(in_image_fftshift)
     return _compute_coef_fourier1(in_fft_norm)
+
+
+def fourier1_color(image_color):
+    """Fourier descriptor.
+
+    Args
+    ----
+        image : ndarray, shape (height, width)
+            Input color image.
+
+    Returns
+    -------
+        descriptor : ndarray, shape ((height // 2 -1 * )3,)
+            The Fourier descriptor.
+    """
+    r = image_color[:, :, 0]
+    g = image_color[:, :, 1]
+    b = image_color[:, :, 2]
+
+    f_r = fourier1(r)
+    f_g = fourier1(g)
+    f_b = fourier1(b)
+
+    return np.hstack([f_r, f_g, f_b])

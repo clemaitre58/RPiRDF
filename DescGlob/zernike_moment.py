@@ -155,3 +155,32 @@ def zernike_moment(img, order):
         Z, A, Phi = _zernike_moment(img, ind_zer[i].n, ind_zer[i].m)
         coef_zernike.append(Z)
     return coef_zernike
+
+
+def zernike_moment_color(img, order):
+    """ Zernike moments for color images
+
+    This functions compute Zernike moments which 48 parameters maximum  for
+    each images
+
+    Args
+    ----
+        img : ndarray, size(width, heigth)
+              input image
+        order : integer
+                order of the moment to compute if order greater than 15, we
+                force order to 15
+    Returns
+    ------
+        coef_zernike : list of float
+                       list of Zernike descriptors max 48 values (3x16)
+    """
+    r = img[:, :, 0]
+    g = img[:, :, 1]
+    b = img[:, :, 2]
+
+    z_r = zernike_moment(r)
+    z_g = zernike_moment(g)
+    z_b = zernike_moment(b)
+
+    return np.hstack([z_r, z_g, z_b)
