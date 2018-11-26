@@ -183,4 +183,4 @@ def zernike_moment_color(img, order):
     z_g = zernike_moment(g)
     z_b = zernike_moment(b)
 
-    return np.hstack([z_r, z_g, z_b)
+    return np.hstack([z_r, z_g, z_b])
