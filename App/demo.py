@@ -1,6 +1,7 @@
 import pygame
 import os
 import picamera
+import joblib
 import numpy as np
 import RPi.GPIO as GPIO
 from time import sleep
@@ -103,6 +104,8 @@ def process_stop_learning(l_individu, l_classe, isNew, isModelExist):
     X = np.array(l_individu)
     clf = SVC(gamma='auto', C=1000, random_state=42)
     clf.fit(X, Y)
+    # Enristrement du modèle
+    joblib.dump(clf, 'clf.joblib')
     # Enregistrement des données de chaque individu (descriptions)
     np.save('mat_desc.npy', l_individu)
     # Enregistrement des données de description des classes
@@ -122,7 +125,7 @@ def process_stop_learning(l_individu, l_classe, isNew, isModelExist):
 
 def process_start_decision(camera, clf, d_lut_nom, isModelExist):
     # on récupère une image
-    if isModelExist is True:
+    if isModelExist :
         res = camera.resolution
         w = res[0]
         h = res[1]
