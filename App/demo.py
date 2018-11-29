@@ -7,9 +7,20 @@ import RPi.GPIO as GPIO
 from time import sleep
 from DescGlob import hu_moment_color
 from sklearn.svm import SVC
+from skimage.io import imsave
 
 
 # variable globale qui sera vue dans toutes les fonctions
+
+
+class manager:
+    def __init__(self):
+        self._isNew = bool()
+        self._num_class = int()
+        self._isSaveImage = bool()
+        self._isSaveData = bool()
+        self._isSaveModel = bool()
+        self._isModelExist = bool()
 
 
 def init():
@@ -69,6 +80,9 @@ def process_start_learning(camera, l_individu, l_nom_classe, d_lut_nom,
         nom_obj = input("Quel est le nom de l'objet ?\n")
         num_class += 1
         d_lut_nom[num_class] = nom_obj
+        # Création d'un dossier
+        if not os.path.exists(nom_obj):
+            os.makedirs(nom_obj)
         isNew = False
 
     # on récupère une image
