@@ -13,7 +13,7 @@ from skimage.io import imsave
 # variable globale qui sera vue dans toutes les fonctions
 
 
-class manager:
+class Manager:
     def __init__(self):
         self._isNew = bool()
         self._num_class = int()
@@ -21,6 +21,14 @@ class manager:
         self._isSaveData = bool()
         self._isSaveModel = bool()
         self._isModelExist = bool()
+        self._clf = None
+
+
+class DataLearning():
+    def __init__(self):
+        self.l_individu = list()
+        self.l_nom_classe = list()
+        self._d_lut_nom = dict()
 
 
 def init():
@@ -71,14 +79,13 @@ def press_btn(channel):
         flag_stop_descision = True
 
 
-def process_start_learning(camera, l_individu, l_nom_classe, d_lut_nom,
-                           isNew, num_class):
+def process_start_learning(camera, data_learning, manager):
     # TODO: Demander un texte si c'est nouvelle apprentissage ou si
     # TODO: ou si on a pas le label dans la basse
-    if isNew is True:
+    if data_learning._isNew:
         # On demande le nom de l'objet
         nom_obj = input("Quel est le nom de l'objet ?\n")
-        num_class += 1
+        manager._num_class += 1
         d_lut_nom[num_class] = nom_obj
         # Création d'un dossier
         if not os.path.exists(nom_obj):
@@ -94,17 +101,17 @@ def process_start_learning(camera, l_individu, l_nom_classe, d_lut_nom,
 
     des_hu_col = hu_moment_color(ind)
 
-    l_individu.append(des_hu_col)
-    l_nom_classe.append(num_class)
+    data_learning._l_individu.append(des_hu_col)
+    data_learning._l_nom_classe.append(manager._num_class)
 
-    return l_individu, l_nom_classe, d_lut_nom, isNew, num_class
+    return data_learning, manger
 
 
-def process_stop_learning(l_individu, l_classe, isNew, isModelExist):
+def process_stop_learning(data_learning, manager):
     # extract number of class
 
     max_ech = len(l_classe)
-    val_last_classe = l_classe[max_ech-1]
+    val_last_classe = data_learning._l_classe[max_ech-1]
 
     print('Last class :', val_last_classe)
 
@@ -112,18 +119,24 @@ def process_stop_learning(l_individu, l_classe, isNew, isModelExist):
         print('Only one class. Impossible to learn something')
         global flag_stop_learning
         flag_stop_learning = False
+        # TODO: change return with data and manger
         return 0, True, False
 
-    Y = np.array(l_classe)
-    X = np.array(l_individu)
-    clf = SVC(gamma='auto', C=1000, random_state=42)
-    clf.fit(X, Y)
+    Y = np.array(data._l_classe)
+    X = np.array(data._l_individu)
+
+    manager._clf = SVC(gamma='auto', C=1000, random_state=42)
+    managet._clf.fit(X, Y)
     # Enristrement du modèle
-    joblib.dump(clf, 'clf.joblib')
-    # Enregistrement des données de chaque individu (descriptions)
-    np.save('mat_desc.npy', l_individu)
-    # Enregistrement des données de description des classes
-    np.save('mat_des_classe.npy', l_classe)
+    if manager._isSaveModel:
+        joblib.dump(managet._clf, 'clf.joblib')
+
+    if manager._isSaveData:
+        # Enregistrement des données de chaque individu (descriptions)
+        np.save('mat_desc.npy', data_learning._l_individu)
+        # Enregistrement des données de description des classes
+        np.save('mat_des_classe.npy', data_learning._l_classe)
+
     # Pour ne pas rentrer dans le process avant la prochaine interrupt sur
     # le bouton stop learning
     global flag_stop_learning
@@ -132,14 +145,14 @@ def process_stop_learning(l_individu, l_classe, isNew, isModelExist):
     # dans la liste X
     # on rend possible l'apprentissage d'une nouvelle classe la prochaine fois
     # qu'on va appuyer sur le bouton start learning
-    isNew = True
-    isModelExist = True
-    return clf, isNew, isModelExist
+    manager._isNew = True
+    manager._isModelExist = True
+    return manager
 
 
-def process_start_decision(camera, clf, d_lut_nom, isModelExist):
+def process_start_decision(camera, data_learning, manger):
     # on récupère une image
-    if isModelExist :
+    if manager._isModelExist:
         res = camera.resolution
         w = res[0]
         h = res[1]
@@ -147,7 +160,7 @@ def process_start_decision(camera, clf, d_lut_nom, isModelExist):
         camera.capture(ind, 'rgb')
         des_hu_col = hu_moment_color(ind)
         classe_ind = clf.predict(des_hu_col)
-        nom = d_lut_nom[classe_ind[0]]
+        nom = data._d_lut_nom[classe_ind[0]]
         print('Object name : ', nom)
         # TODO: faire l'annonce de la classe par la synthèse vocale
         mes = 'flite -voice awb -t "' + nom + '"'
@@ -167,6 +180,10 @@ def process_stop_decision():
 
 
 if __name__ == '__main__':
+
+    # initialisation du manger et de la structure de donnée
+    manager = Manager()
+    data_learning = DataLearning()
 
     # initialisation du flag
     flag_stop_learning = False
@@ -199,12 +216,14 @@ if __name__ == '__main__':
         # si une interruption c'est produite alors on lance le traitement c
         # adéquat
         if flag_start_learning:
-            X, Y, d_lut_nom,isNew,num_class = process_start_learning(camera, X, Y, d_lut_nom, isNew, num_class)
+            data_learning, manager = process_start_learning(camera,
+                                                            data_learning,
+                                                            manager)
         if flag_stop_learning:
-            clf, isNew, isModelExist = process_stop_learning(X, Y, isNew, isModelExist)
+            manager = process_stop_learning(data_learning, manager)
             print('Learning done!')
         if flag_start_descision:
-            process_start_decision(camera, clf, d_lut_nom, isModelExist)
+            process_start_decision(camera, data_learning, manager)
         if flag_stop_descision:
             process_stop_decision()
             print('stop decision')
